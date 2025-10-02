@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etisalat UPG Payment Gateway - Project Documentation</title>
+    <style>
+        @media print {
+            body { margin: 0; font-size: 10pt; }
+            .page-break { page-break-before: always; }
+            .no-print { display: none; }
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            margin: 40px;
+            color: #333;
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #e60012;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #e60012;
+            font-size: 24pt;
+            margin: 0;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 12pt;
+            margin: 10px 0 0 0;
+        }
+        
+        h2 {
+            color: #e60012;
+            border-bottom: 2px solid #e60012;
+            padding-bottom: 5px;
+            margin-top: 30px;
+            font-size: 16pt;
+        }
+        
+        h3 {
+            color: #333;
+            margin-top: 25px;
+            font-size: 14pt;
+        }
+        
+        h4 {
+            color: #666;
+            margin-top: 20px;
+            font-size: 12pt;
+        }
+        
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 9pt;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        
+        .folder-structure {
+            background-color: #f8f9fa;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 9pt;
+            margin: 10px 0;
+        }
+        
+        .api-endpoint {
+            background-color: #e3f2fd;
+            border: 1px solid #2196f3;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .api-endpoint h4 {
+            color: #1976d2;
+            margin-top: 0;
+        }
+        
+        .security-note {
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .feature-list {
+            columns: 2;
+            column-gap: 30px;
+        }
+        
+        .feature-list li {
+            break-inside: avoid;
+            margin-bottom: 8px;
+        }
+        
+        .version-info {
+            background-color: #d4edda;
+            border: 1px solid #28a745;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10pt;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        .btn-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .btn {
+            background-color: #e60012;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12pt;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            background-color: #cc0010;
+        }
+        
+        .toc {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .toc ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .toc li {
+            padding: 5px 0;
+        }
+        
+        .toc a {
+            text-decoration: none;
+            color: #333;
+        }
+        
+        .toc a:hover {
+            color: #e60012;
+        }
+    </style>
+</head>
+<body>
+    <!-- Print Buttons -->
+    <div class="btn-container no-print">
+        <button class="btn" onclick="window.print()">Print to PDF</button>
+        <button class="btn" onclick="generatePDF()">Save as PDF</button>
+    </div>
+    
+    <!-- Header -->
+    <div class="header">
+        <h1>ETISALAT UPG PAYMENT GATEWAY</h1>
+        <p>Project Documentation & Workflow</p>
+        <p>Generated: September 29, 2025</p>
+    </div>
+    
+    <!-- Table of Contents -->
+    <div class="toc">
+        <h3>Table of Contents</h3>
+        <ul>
+            <li><a href="#overview">1. Project Overview</a></li>
+            <li><a href="#architecture">2. Project Architecture</a></li>
+            <li><a href="#workflow">3. Development Workflow</a></li>
+            <li><a href="#technical">4. Technical Implementation</a></li>
+            <li><a href="#api">5. API Endpoints Documentation</a></li>
+            <li><a href="#security">6. Security Implementation</a></li>
+            <li><a href="#deployment">7. Deployment Workflow</a></li>
+            <li><a href="#troubleshooting">8. Troubleshooting Guide</a></li>
+            <li><a href="#enhancements">9. Future Enhancements</a></li>
+            <li><a href="#maintenance">10. Maintenance Tasks</a></li>
+            <li><a href="#support">11. Support and Documentation</a></li>
+        </ul>
+    </div>
+    
+    <div class="page-break"></div>
+    
+    <!-- Project Overview -->
+    <section id="overview">
+        <h2>1. PROJECT OVERVIEW</h2>
+        <p>This project implements the Etisalat UPG (Universal Payment Gateway) Request to Pay functionality using Node.js and Express.js with a modern HTML/CSS/JavaScript frontend.</p>
+        <p>The system allows merchants to send payment requests to customers' mobile wallets (Tahweel/mVisa) through the Etisalat UPG API.</p>
+        
+        <h3>Key Features</h3>
+        <ul class="feature-list">
+            <li>Request to Pay (R2P) functionality</li>
+            <li>Secure HMAC-SHA256 authentication</li>
+            <li>Production-ready implementation</li>
+            <li>Modern responsive frontend</li>
+            <li>REST API architecture</li>
+            <li>Environment-based configuration</li>
+            <li>Comprehensive validation</li>
+            <li>Real-time form validation</li>
+        </ul>
+    </section>
+    
+    <div class="page-break"></div>
+    
+    <!-- Project Architecture -->
+    <section id="architecture">
+        <h2>2. PROJECT ARCHITECTURE</h2>
+        
+        <h3>Technology Stack</h3>
+        <ul>
+            <li><strong>Backend:</strong> Node.js + Express.js</li>
+            <li><strong>Frontend:</strong> HTML5 + CSS3 + JavaScript (ES6+)</li>
+            <li><strong>UI Framework:</strong> Bootstrap 5</li>
+            <li><strong>Icons:</strong> Font Awesome 6</li>
+            <li><strong>HTTP Client:</strong> Axios</li>
+            <li><strong>Environment Management:</strong> dotenv</li>
+            <li><strong>Security:</strong> HMAC-SHA256</li>
+        </ul>
+        
+        <h3>Folder Structure</h3>
+        <div class="folder-structure">
+etisalat-upg-payment/
+├── .env                    # Environment configuration (credentials)
+├── server.js               # Main Express server application
+├── package.json            # Node.js dependencies and scripts
+├── README.md               # Project documentation
+├── setup.bat               # Windows installation script
+├── services/
+│   └── upgService.js       # UPG API integration service
+├── utils/
+│   └── hash.js            # Cryptographic utilities (HMAC-SHA256)
+├── public/                # Static frontend files
+│   ├── index.html         # Main payment form page
+│   ├── error.html         # Error fallback page
+│   ├── css/
+│   │   └── style.css      # Custom CSS styles
+│   └── js/
+│       └── app.js         # Frontend JavaScript logic
+└── views/                 # Legacy EJS templates (deprecated)
+    ├── error.ejs
+    ├── payment-form.ejs
+    └── payment-result.ejs
+        </div>
+    </section>
+    
+    <div class="page-break"></div>
+    
+    <!-- Development Workflow -->
+    <section id="workflow">
+        <h2>3. DEVELOPMENT WORKFLOW</h2>
+        
+        <h3>Phase 1: Project Initialization</h3>
+        <ol>
+            <li>Created Node.js project structure</li>
+            <li>Installed core dependencies:
+                <ul>
+                    <li>express: Web application framework</li>
+                    <li>axios: HTTP client for API requests</li>
+                    <li>body-parser: Request body parsing middleware</li>
+                    <li>dotenv: Environment variable management</li>
+                    <li>nodemon: Development auto-reload (dev dependency)</li>
+                </ul>
+            </li>
+            <li>Set up basic Express server with middleware configuration</li>
+        </ol>
+        
+        <h3>Phase 2: Backend Development</h3>
+        <ol>
+            <li><strong>UPG API Service (services/upgService.js):</strong>
+                <ul>
+                    <li>Implemented requestToPay() function</li>
+                    <li>Added parameter validation</li>
+                    <li>Configured API endpoint communication</li>
+                    <li>Error handling and response processing</li>
+                </ul>
+            </li>
+            <li><strong>Cryptographic Utilities (utils/hash.js):</strong>
+                <ul>
+                    <li>generateSecureHash() function using HMAC-SHA256</li>
+                    <li>generateTransactionDateTime() for unique timestamps</li>
+                    <li>Secure hash validation per UPG API requirements</li>
+                </ul>
+            </li>
+            <li><strong>Server Routes (server.js):</strong>
+                <ul>
+                    <li>GET / : Serve main HTML page</li>
+                    <li>POST /api/request-to-pay : Process payment requests</li>
+                    <li>GET /status : Health check endpoint</li>
+                    <li>Error handling middleware</li>
+                    <li>404 fallback handler</li>
+                </ul>
+            </li>
+        </ol>
+        
+        <h3>Phase 3: Frontend Development</h3>
+        <p><em>Migration from EJS to Static HTML/CSS/JS</em></p>
+        <ol>
+            <li><strong>HTML Structure (public/index.html):</strong>
+                <ul>
+                    <li>Responsive Bootstrap 5 layout</li>
+                    <li>Comprehensive payment form</li>
+                    <li>Modal dialogs for results</li>
+                    <li>Accessibility features</li>
+                    <li>Mobile-first design</li>
+                </ul>
+            </li>
+            <li><strong>CSS Styling (public/css/style.css):</strong>
+                <ul>
+                    <li>Etisalat brand colors and styling</li>
+                    <li>Responsive breakpoints</li>
+                    <li>Form validation states</li>
+                    <li>Loading animations</li>
+                    <li>Print styles</li>
+                </ul>
+            </li>
+            <li><strong>JavaScript Application (public/js/app.js):</strong>
+                <ul>
+                    <li>PaymentGateway class for form handling</li>
+                    <li>Real-time form validation</li>
+                    <li>AJAX API communication</li>
+                    <li>Success/error result display</li>
+                    <li>User experience enhancements</li>
+                </ul>
+            </li>
+        </ol>
+        
+        <h3>Phase 4: Environment Configuration</h3>
+        <ol>
+            <li><strong>Environment Variables (.env file):</strong>
+                <ul>
+                    <li>MERCHANT_ID: 10986849809</li>
+                    <li>TERMINAL_ID: 704207</li>
+                    <li>MERCHANT_SECRET_KEY: [64-character hex string]</li>
+                    <li>API endpoints and default settings</li>
+                </ul>
+            </li>
+            <li>Updated server to use environment variables</li>
+            <li>Added configuration validation on startup</li>
+        </ol>
+    </section>
+    
+    <div class="page-break"></div>
+    
+    <!-- Technical Implementation -->
+    <section id="technical">
+        <h2>4. TECHNICAL IMPLEMENTATION DETAILS</h2>
+        
+        <h3>API Integration</h3>
+        <ul>
+            <li><strong>Endpoint:</strong> https://upg.egyptianbanks.com/cube/paylink.svc/api/RequestToPay</li>
+            <li><strong>Method:</strong> POST</li>
+            <li><strong>Authentication:</strong> HMAC-SHA256 secure hash</li>
+            <li><strong>Content-Type:</strong> application/json</li>
+        </ul>
+        
+        <div class="security-note">
+            <h4>Secure Hash Generation Process</h4>
+            <p><strong>Algorithm:</strong> HMAC-SHA256</p>
+            <p><strong>Input Fields (concatenated with &):</strong></p>
+            <ul>
+                <li>DateTimeLocalTrxn=YYMMDDHHMMSSmm</li>
+                <li>MerchantId=10986849809</li>
+                <li>TerminalId=704207</li>
+            </ul>
+            <p><strong>Process:</strong></p>
+            <ol>
+                <li>Sort parameters alphabetically</li>
+                <li>Concatenate as: "DateTimeLocalTrxn=value&MerchantId=value&TerminalId=value"</li>
+                <li>Generate HMAC-SHA256 with merchant secret key</li>
+                <li>Convert to uppercase hexadecimal</li>
+            </ol>
+        </div>
+        
+        <h3>Frontend Features</h3>
+        
+        <h4>1. Form Validation</h4>
+        <ul>
+            <li>Real-time input validation</li>
+            <li>Egyptian mobile number formatting</li>
+            <li>Amount validation (0.01-999,999 EGP)</li>
+            <li>Required field indicators</li>
+        </ul>
+        
+        <h4>2. User Experience</h4>
+        <ul>
+            <li>Loading states during API calls</li>
+            <li>Success/error modal dialogs</li>
+            <li>Clipboard copy functionality</li>
+            <li>Responsive design for all devices</li>
+            <li>Accessibility compliance</li>
+        </ul>
+        
+        <h4>3. Payment Options</h4>
+        <ul>
+            <li>Basic payment (amount + mobile number)</li>
+            <li>Optional merchant reference</li>
+            <li>Validity period configuration</li>
+            <li>Customer metadata (loyalty, label, etc.)</li>
+            <li>Tip enablement</li>
+            <li>Convenience fees (fixed or percentage)</li>
+        </ul>
+    </section>
+    
+    <div class="page-break"></div>
+    
+    <!-- API Endpoints -->
+    <section id="api">
+        <h2>5. API ENDPOINTS DOCUMENTATION</h2>
+        
+        <div class="api-endpoint">
+            <h4>POST /api/request-to-pay</h4>
+            <p><strong>Purpose:</strong> Send payment request to customer mobile wallet</p>
+            
+            <p><strong>Request Headers:</strong></p>
+            <div class="code-block">Content-Type: application/json</div>
+            
+            <p><strong>Request Body:</strong></p>
+            <div class="code-block">{
+  "amount": 100.50,              // Required: Payment amount in EGP
+  "mobileNumber": "01234567890", // Required: Customer mobile number
+  "merchantReference": "REF123", // Optional: Internal reference
+  "validity": 30,                // Optional: Validity in minutes
+  "loyaltyNumber": "12345",      // Optional: Customer loyalty number
+  "customerLabel": "VIP",        // Optional: Customer label
+  "purposeOfTransaction": "Bill",// Optional: Payment purpose
+  "billNumber": "INV-001",       // Optional: Bill/invoice number
+  "tip": false,                  // Optional: Enable tip option
+  "convenienceFeeFixed": 5.00,   // Optional: Fixed fee in EGP
+  "convenienceFeePercentage": 2.5// Optional: Percentage fee
+}</div>
+            
+            <p><strong>Success Response (200):</strong></p>
+            <div class="code-block">{
+  "success": true,
+  "data": {
+    "Success": true,
+    "SystemReference": 31922,
+    "TxnId": 31922,
+    "TxnDate": "20231001120000",
+    "Validity": "30",
+    "ISOQR": "...",
+    "MerchantReference": "REF123",
+    "ReceiverAccountNumber": "01234567890",
+    "ReceiverScheme": "UPGS-NBE-Production"
+  },
+  "paymentData": {
+    "amount": 100.50,
+    "mobileNumber": "01234567890",
+    "merchantReference": "REF123"
+  }
+}</div>
+            
+            <p><strong>Error Response (400/500):</strong></p>
+            <div class="code-block">{
+  "success": false,
+  "error": "Amount and Mobile Number are required fields."
+}</div>
+        </div>
+        
+        <div class="api-endpoint">
+            <h4>GET /status</h4>
+            <p><strong>Purpose:</strong> Health check and configuration info</p>
+            
+            <p><strong>Response (200):</strong></p>
+            <div class="code-block">{
+  "status": "OK",
+  "service": "Etisalat UPG Request to Pay",
+  "timestamp": "2023-10-01T12:00:00.000Z",
+  "config": {
+    "merchantId": "10986849809",
+    "terminalId": "704207",
+    "currency": "EGP (818)"
+  }
+}</div>
+        </div>
+    </section>
+    
+    <div class="page-break"></div>
+    
+    <!-- Security Implementation -->
+    <section id="security">
+        <h2>6. SECURITY IMPLEMENTATION</h2>
+        
+        <h3>1. Environment Variables</h3>
+        <ul>
+            <li>All sensitive credentials stored in .env file</li>
+            <li>No hardcoded secrets in source code</li>
+            <li>Production/development environment separation</li>
+        </ul>
+        
+        <h3>2. API Security</h3>
+        <ul>
+            <li>HMAC-SHA256 request signing</li>
+            <li>Unique transaction timestamps</li>
+            <li>Input validation and sanitization</li>
+            <li>Error message sanitization</li>
+        </ul>
+        
+        <h3>3. Frontend Security</h3>
+        <ul>
+            <li>Client-side validation (with server-side backup)</li>
+            <li>XSS prevention through proper encoding</li>
+            <li>CSRF protection ready (can be added)</li>
+            <li>Secure communication (HTTPS in production)</li>
+        </ul>
+        
+        <h3>Environment Variables Configuration</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Variable</th>
+                    <th>Description</th>
+                    <th>Required</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>MERCHANT_ID</td>
+                    <td>Etisalat merchant ID</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>TERMINAL_ID</td>
+                    <td>Etisalat terminal ID</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>MERCHANT_SECRET_KEY</td>
+                    <td>Secret key for HMAC</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>UPG_BASE_URL</td>
+                    <td>UPG API base URL</td>
+                    <td>No (has default)</td>
+                </tr>
+                <tr>
+                    <td>PORT</td>
+                    <td>Server port</td>
+                    <td>No (default: 3000)</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+    
+    <div class="page-break"></div>
+    
+    <!-- Deployment Workflow -->
+    <section id="deployment">
+        <h2>7. DEPLOYMENT WORKFLOW</h2>
+        
+        <h3>Development Setup</h3>
+        <ol>
+            <li>Clone repository</li>
+            <li>Copy .env.example to .env</li>
+            <li>Configure merchant credentials</li>
+            <li>Run: <code>npm install</code></li>
+            <li>Run: <code>npm run dev</code> (development with auto-reload)</li>
+        </ol>
+        
+        <h3>Production Deployment</h3>
+        <ol>
+            <li>Set NODE_ENV=production</li>
+            <li>Configure production .env variables</li>
+            <li>Install production dependencies: <code>npm install --production</code></li>
+            <li>Start server: <code>npm start</code></li>
+            <li>Configure reverse proxy (nginx/Apache)</li>
+            <li>Set up SSL certificate</li>
+            <li>Configure firewall rules</li>
+        </ol>
+        
+        <h3>Testing Workflow</h3>
+        <ol>
+            <li>Unit testing (can be added with Jest)</li>
+            <li>API endpoint testing</li>
+            <li>Form validation testing</li>
+            <li>Cross-browser compatibility testing</li>
+            <li>Mobile responsiveness testing</li>
+            <li>Payment flow testing with test credentials</li>
+        </ol>
+    </section>
+    
+    <div class="page-break"></div>
+    
+    <!-- Troubleshooting -->
+    <section id="troubleshooting">
+        <h2>8. TROUBLESHOOTING GUIDE</h2>
+        
+        <h3>Common Issues</h3>
+        
+        <h4>1. "Missing required environment variables"</h4>
+        <p><strong>Solution:</strong> Check .env file exists and contains all required variables</p>
+        
+        <h4>2. "UPG API Error (401): Unauthorized"</h4>
+        <p><strong>Solution:</strong> Verify merchant credentials and secure hash generation</p>
+        
+        <h4>3. "Network error. Please check your connection"</h4>
+        <p><strong>Solution:</strong> Check internet connectivity and UPG API endpoint availability</p>
+        
+        <h4>4. "Amount must be greater than zero"</h4>
+        <p><strong>Solution:</strong> Ensure amount is positive number in correct format</p>
+        
+        <h4>5. Frontend not loading properly</h4>
+        <p><strong>Solution:</strong> Check static file serving and paths in server.js</p>
+        
+        <h3>Debug Steps</h3>
+        <ol>
+            <li>Check server console for error messages</li>
+            <li>Verify .env file configuration</li>
+            <li>Test API endpoints with Postman/curl</li>
+            <li>Check browser developer tools for JavaScript errors</li>
+            <li>Verify network connectivity to UPG servers</li>
+        </ol>
+        
+        <h3>Monitoring and Logging</h3>
+        <ul>
+            <li>Server logs all API requests/responses</li>
+            <li>Error tracking with stack traces</li>
+            <li>Performance monitoring (can be added)</li>
+            <li>Transaction audit trail</li>
+        </ul>
+    </section>
+    
+    <div class="page-break"></div>
+    
+    <!-- Future Enhancements -->
+    <section id="enhancements">
+        <h2>9. FUTURE ENHANCEMENTS</h2>
+        
+        <h3>Planned Features</h3>
+        <ul>
+            <li>Transaction status checking</li>
+            <li>Refund functionality</li>
+            <li>QR code generation</li>
+            <li>Payment notifications webhook</li>
+            <li>Dashboard for transaction history</li>
+            <li>Multi-language support</li>
+            <li>Rate limiting</li>
+            <li>API authentication for multiple merchants</li>
+        </ul>
+        
+        <h3>Technical Improvements</h3>
+        <ul>
+            <li>Unit and integration tests</li>
+            <li>API documentation (Swagger/OpenAPI)</li>
+            <li>Docker containerization</li>
+            <li>Database integration for transaction logging</li>
+            <li>Redis caching for performance</li>
+            <li>Load balancing for scalability</li>
+            <li>Monitoring and alerting (Prometheus/Grafana)</li>
+        </ul>
+    </section>
+    
+    <div class="page-break"></div>
+    
+    <!-- Maintenance Tasks -->
+    <section id="maintenance">
+        <h2>10. MAINTENANCE TASKS</h2>
+        
+        <h3>Regular Maintenance</h3>
+        <ul>
+            <li>Update dependencies (npm audit)</li>
+            <li>Security vulnerability scanning</li>
+            <li>Performance optimization</li>
+            <li>Log rotation and cleanup</li>
+            <li>SSL certificate renewal</li>
+            <li>Backup configuration files</li>
+        </ul>
+        
+        <h3>Code Quality</h3>
+        <ul>
+            <li>ESLint configuration for code standards</li>
+            <li>Prettier for code formatting</li>
+            <li>Git hooks for pre-commit validation</li>
+            <li>Code review process</li>
+            <li>Documentation updates</li>
+        </ul>
+    </section>
+    
+    <div class="page-break"></div>
+    
+    <!-- Support and Documentation -->
+    <section id="support">
+        <h2>11. SUPPORT AND DOCUMENTATION</h2>
+        
+        <h3>Developer Resources</h3>
+        <ul>
+            <li>Etisalat UPG API Documentation</li>
+            <li>Node.js/Express.js documentation</li>
+            <li>Bootstrap 5 documentation</li>
+            <li>Font Awesome icon reference</li>
+        </ul>
+        
+        <h3>Contact Information</h3>
+        <ul>
+            <li><strong>Technical Support:</strong> Etisalat UPG Integration Team</li>
+            <li><strong>Documentation:</strong> PROJECT_DOCUMENTATION.txt + README.md</li>
+            <li><strong>Code Repository:</strong> [Project location]</li>
+        </ul>
+        
+        <div class="version-info">
+            <h3>Version History</h3>
+            <ul>
+                <li><strong>v1.0.0</strong> - Initial implementation with EJS templates</li>
+                <li><strong>v2.0.0</strong> - Migration to static HTML/CSS/JS frontend</li>
+                <li><strong>v2.1.0</strong> - Environment variable configuration</li>
+                <li><strong>v2.2.0</strong> - Production credentials integration</li>
+            </ul>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <div class="page-break"></div>
+    <div style="text-align: center; margin-top: 50px; color: #666;">
+        <p><strong>END OF DOCUMENTATION</strong></p>
+        <p>Etisalat UPG Payment Gateway Project</p>
+        <p>Generated: September 29, 2025</p>
+    </div>
+    
+    <script>
+        function generatePDF() {
+            // Hide print buttons before printing
+            const buttons = document.querySelectorAll('.no-print');
+            buttons.forEach(btn => btn.style.display = 'none');
+            
+            // Print the page
+            window.print();
+            
+            // Show buttons again after printing
+            setTimeout(() => {
+                buttons.forEach(btn => btn.style.display = 'block');
+            }, 1000);
+        }
+        
+        // Add smooth scrolling for table of contents links
+        document.querySelectorAll('.toc a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

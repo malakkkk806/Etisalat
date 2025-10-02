@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etisalat UPG Payment - Request to Pay</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <!-- Animated Header -->
+    <div class="header-container">
+        <div class="header-background">
+            <div class="container-fluid h-100">
+                <div class="row h-100 align-items-center">
+                    <!-- Left Logo -->
+                    <div class="col-4 text-start">
+                        <div class="logo-container animate-slide-left">
+                            <img src="images/logo.png" alt="Booking Logo" class="header-logo">
+                        </div>
+                    </div>
+                    
+                    <!-- Center Content -->
+                    <div class="col-4 text-center">
+                        <div class="center-content animate-fade-in">
+                            <h1 class="epay-title">ePay</h1>
+                            <p class="epay-subtitle">Secure Mobile Payment Gateway</p>
+                            <div class="security-badge">
+                                <i class="fas fa-shield-alt me-2"></i>
+                                SSL Encrypted & Secure
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Logo -->
+                    <div class="col-4 text-end">
+                        <div class="logo-container animate-slide-right">
+                            <img src="images/etisalat logo.png" alt="Etisalat Logo" class="header-logo">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Static Wave Effect -->
+        <div class="wave-container">
+            <svg class="wave" xmlns="http://www.w3.org/2000/svg" viewBox="0 24 150 28" preserveAspectRatio="none">
+                <defs>
+                    <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+                </defs>
+                <g class="parallax">
+                    <use href="#gentle-wave" x="48" y="0" fill="rgba(230, 0, 18, 0.8)" />
+                    <use href="#gentle-wave" x="48" y="3" fill="rgba(230, 0, 18, 0.6)" />
+                    <use href="#gentle-wave" x="48" y="5" fill="rgba(230, 0, 18, 0.4)" />
+                    <use href="#gentle-wave" x="48" y="7" fill="rgba(230, 0, 18, 1)" />
+                </g>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <!-- Alert Messages -->
+                <div id="alertContainer"></div>
+
+                <!-- Payment Form Card -->
+                <div class="card shadow-lg payment-card">
+                    <div class="card-header payment-card-header text-white text-center">
+                        <h4 class="mb-0 animate-fade-in">
+                            Request to Pay
+                        </h4>
+                        <p class="mb-0 opacity-75">Send a payment request directly to a mobile number</p>
+                    </div>
+                    
+                    <div class="card-body p-4">
+                        <form id="paymentForm">
+                            <!-- Required Fields Section -->
+                            <div class="section-header">
+                                <h6><i class="fas fa-asterisk text-danger me-2"></i>Required Information</h6>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="amount" class="form-label">
+                                        <i class="fas fa-money-bill-wave text-success me-1"></i>
+                                        Amount (EGP) <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="number" class="form-control" id="amount" name="amount" 
+                                           step="0.01" min="0.01" max="999999" required
+                                           placeholder="Enter amount in EGP">
+                                    <div class="form-text">Amount will be converted to piasters automatically</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="mobileNumber" class="form-label mobile-label">
+                                        <i class="fas fa-mobile-alt text-danger me-1"></i>
+                                        Mobile Number <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="tel" class="form-control mobile-input" id="mobileNumber" name="mobileNumber" 
+                                           pattern="[0-9]{10,14}" required
+                                           placeholder="01XXXXXXXXX">
+                                    <div class="form-text">Egyptian mobile number format (11 digits)</div>
+                                </div>
+                            </div>
+
+                            <!-- Optional Fields Section -->
+                            <div class="section-header">
+                                <h6><i class="fas fa-cog text-secondary me-2"></i>Optional Information</h6>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="merchantReference" class="form-label">
+                                        <i class="fas fa-tag text-info me-1"></i>
+                                        Merchant Reference
+                                    </label>
+                                    <input type="text" class="form-control" id="merchantReference" 
+                                           name="merchantReference" maxlength="300"
+                                           placeholder="Your internal reference">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="validity" class="form-label">
+                                        <i class="fas fa-clock text-warning me-1"></i>
+                                        Validity (minutes)
+                                    </label>
+                                    <input type="number" class="form-control" id="validity" name="validity" 
+                                           min="1" max="1440" value="30"
+                                           placeholder="30">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="loyaltyNumber" class="form-label">
+                                        <i class="fas fa-star text-gold me-1"></i>
+                                        Loyalty Number
+                                    </label>
+                                    <input type="text" class="form-control" id="loyaltyNumber" 
+                                           name="loyaltyNumber" maxlength="25"
+                                           placeholder="Customer loyalty number">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="customerLabel" class="form-label">
+                                        <i class="fas fa-user-tag text-purple me-1"></i>
+                                        Customer Label
+                                    </label>
+                                    <input type="text" class="form-control" id="customerLabel" 
+                                           name="customerLabel" maxlength="25"
+                                           placeholder="Customer label">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="purposeOfTransaction" class="form-label">
+                                        <i class="fas fa-comment-alt text-teal me-1"></i>
+                                        Purpose of Transaction
+                                    </label>
+                                    <input type="text" class="form-control" id="purposeOfTransaction" 
+                                           name="purposeOfTransaction" maxlength="25"
+                                           placeholder="Payment purpose">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="billNumber" class="form-label">
+                                        <i class="fas fa-receipt text-brown me-1"></i>
+                                        Bill Number
+                                    </label>
+                                    <input type="text" class="form-control" id="billNumber" 
+                                           name="billNumber" maxlength="25"
+                                           placeholder="Bill or invoice number">
+                                </div>
+                            </div>
+
+                            <!-- Additional Options -->
+                            <div class="section-header">
+                                <h6><i class="fas fa-plus-circle text-info me-2"></i>Additional Options</h6>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="tip" name="tip">
+                                        <label class="form-check-label" for="tip">
+                                            <i class="fas fa-hand-holding-usd text-success me-1"></i>
+                                            Enable Tip Option
+                                        </label>
+                                        <div class="form-text">Allow customer to add a tip amount</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="convenienceFeeSection">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="convenienceFeeFixed" class="form-label">
+                                            <i class="fas fa-coins text-warning me-1"></i>
+                                            Fixed Convenience Fee (EGP)
+                                        </label>
+                                        <input type="number" class="form-control" id="convenienceFeeFixed" 
+                                               name="convenienceFeeFixed" step="0.01" min="0"
+                                               placeholder="Fixed fee amount">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="convenienceFeePercentage" class="form-label">
+                                            <i class="fas fa-percentage text-info me-1"></i>
+                                            Convenience Fee (%)
+                                        </label>
+                                        <input type="number" class="form-control" id="convenienceFeePercentage" 
+                                               name="convenienceFeePercentage" step="0.01" min="0" max="100"
+                                               placeholder="Percentage fee">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submit Section -->
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-etisalat btn-lg" id="submitBtn">
+                                    <i class="fas fa-paper-plane me-2"></i>
+                                    <span id="submitText">Send Payment Request</span>
+                                    <span id="submitSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status"></span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Information Card -->
+                <div class="card mt-4 border-info">
+                    <div class="card-body">
+                        <h6 class="card-title text-info">
+                            <i class="fas fa-info-circle me-2"></i>How it works
+                        </h6>
+                        <ul class="list-unstyled mb-0">
+                            <li><i class="fas fa-check text-success me-2"></i>Enter payment details and customer mobile number</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Request is sent to customer's mobile wallet</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Customer receives notification to approve payment</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Payment is processed once approved</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Result Modal -->
+    <div class="modal fade" id="resultModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" id="modalHeader">
+                    <h5 class="modal-title" id="modalTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <!-- Result content will be inserted here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-etisalat" onclick="location.reload()">New Request</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center mt-5 py-4 bg-dark text-light">
+        <div class="container">
+            <p class="mb-0">
+                <i class="fas fa-shield-alt me-2"></i>
+                Powered by Etisalat UPG Payment Gateway
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

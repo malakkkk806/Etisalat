@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .payment-container {
+            max-width: 600px;
+            margin: 50px auto;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .payment-header {
+            background: linear-gradient(135deg, #e60012, #ff6b35);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .payment-body {
+            padding: 40px;
+            background: white;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #333;
+        }
+        .btn-etisalat {
+            background: linear-gradient(135deg, #e60012, #ff6b35);
+            border: none;
+            padding: 12px 30px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .btn-etisalat:hover {
+            background: linear-gradient(135deg, #cc0010, #e55a2b);
+            transform: translateY(-2px);
+        }
+        .optional-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .alert-custom {
+            border-radius: 8px;
+            border: none;
+        }
+        .logo {
+            width: 150px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container">
+        <div class="payment-container">
+            <div class="payment-header">
+                <i class="fas fa-mobile-alt fa-3x mb-3"></i>
+                <h2 class="mb-0">Etisalat Pay</h2>
+                <p class="mb-0 opacity-75">Request to Pay Service</p>
+            </div>
+            
+            <div class="payment-body">
+                <% if (error) { %>
+                    <div class="alert alert-danger alert-custom" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <%= error %>
+                    </div>
+                <% } %>
+
+                <% if (success) { %>
+                    <div class="alert alert-success alert-custom" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <%= success %>
+                    </div>
+                <% } %>
+
+                <form method="POST" action="/request-to-pay" id="paymentForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="amount" class="form-label">
+                                <i class="fas fa-money-bill me-2"></i>Amount (EGP) *
+                            </label>
+                            <input type="number" 
+                                   class="form-control form-control-lg" 
+                                   id="amount" 
+                                   name="amount" 
+                                   step="0.01" 
+                                   min="0.01" 
+                                   placeholder="0.00" 
+                                   required>
+                            <div class="form-text">Enter amount in Egyptian Pounds</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="mobileNumber" class="form-label">
+                                <i class="fas fa-phone me-2"></i>Mobile Number *
+                            </label>
+                            <input type="tel" 
+                                   class="form-control form-control-lg" 
+                                   id="mobileNumber" 
+                                   name="mobileNumber" 
+                                   placeholder="01XXXXXXXX" 
+                                   pattern="[0-9]{10,14}"
+                                   required>
+                            <div class="form-text">Tahweel registered mobile number</div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="merchantReference" class="form-label">
+                                <i class="fas fa-hashtag me-2"></i>Merchant Reference
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="merchantReference" 
+                                   name="merchantReference" 
+                                   placeholder="Optional reference"
+                                   maxlength="300">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="validity" class="form-label">
+                                <i class="fas fa-clock me-2"></i>Validity (Minutes)
+                            </label>
+                            <select class="form-control" id="validity" name="validity">
+                                <option value="30" selected>30 Minutes</option>
+                                <option value="15">15 Minutes</option>
+                                <option value="60">1 Hour</option>
+                                <option value="120">2 Hours</option>
+                                <option value="1440">1 Day</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Optional Fields Section -->
+                    <div class="optional-section">
+                        <h5 class="mb-3">
+                            <i class="fas fa-cogs me-2"></i>Additional Information (Optional)
+                        </h5>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="loyaltyNumber" class="form-label">Loyalty Number</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="loyaltyNumber" 
+                                       name="loyaltyNumber" 
+                                       placeholder="Loyalty card number"
+                                       maxlength="25">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="customerLabel" class="form-label">Customer Label</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="customerLabel" 
+                                       name="customerLabel" 
+                                       placeholder="Customer identifier"
+                                       maxlength="25">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="purposeOfTransaction" class="form-label">Purpose of Transaction</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="purposeOfTransaction" 
+                                       name="purposeOfTransaction" 
+                                       placeholder="Payment purpose"
+                                       maxlength="25">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="billNumber" class="form-label">Bill Number</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="billNumber" 
+                                       name="billNumber" 
+                                       placeholder="Bill reference"
+                                       maxlength="25">
+                            </div>
+                        </div>
+
+                        <!-- Fee Options -->
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" 
+                                           type="checkbox" 
+                                           id="tip" 
+                                           name="tip" 
+                                           value="true"
+                                           onchange="toggleFeeOptions()">
+                                    <label class="form-check-label" for="tip">
+                                        <i class="fas fa-heart me-2"></i>Enable Tip Option
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="feeOptions" class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="convenienceFeeFixed" class="form-label">Fixed Convenience Fee (EGP)</label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="convenienceFeeFixed" 
+                                       name="convenienceFeeFixed" 
+                                       step="0.01" 
+                                       min="0"
+                                       placeholder="0.00"
+                                       onchange="clearPercentageFee()">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="convenienceFeePercentage" class="form-label">Convenience Fee (%)</label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="convenienceFeePercentage" 
+                                       name="convenienceFeePercentage" 
+                                       step="0.01" 
+                                       min="0" 
+                                       max="100"
+                                       placeholder="0.00"
+                                       onchange="clearFixedFee()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-etisalat btn-lg text-white">
+                            <i class="fas fa-paper-plane me-2"></i>Send Payment Request
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4">
+                    <small class="text-muted">
+                        <i class="fas fa-shield-alt me-1"></i>
+                        Powered by Etisalat UPG Secure Payment Gateway
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleFeeOptions() {
+            const tipCheckbox = document.getElementById('tip');
+            const feeOptions = document.getElementById('feeOptions');
+            const fixedFee = document.getElementById('convenienceFeeFixed');
+            const percentageFee = document.getElementById('convenienceFeePercentage');
+            
+            if (tipCheckbox.checked) {
+                feeOptions.style.display = 'none';
+                fixedFee.value = '';
+                percentageFee.value = '';
+            } else {
+                feeOptions.style.display = 'flex';
+            }
+        }
+
+        function clearPercentageFee() {
+            const fixedFee = document.getElementById('convenienceFeeFixed');
+            const percentageFee = document.getElementById('convenienceFeePercentage');
+            
+            if (fixedFee.value) {
+                percentageFee.value = '';
+            }
+        }
+
+        function clearFixedFee() {
+            const fixedFee = document.getElementById('convenienceFeeFixed');
+            const percentageFee = document.getElementById('convenienceFeePercentage');
+            
+            if (percentageFee.value) {
+                fixedFee.value = '';
+            }
+        }
+
+        // Form validation and submission
+        document.getElementById('paymentForm').addEventListener('submit', function(e) {
+            const amount = document.getElementById('amount').value;
+            const mobileNumber = document.getElementById('mobileNumber').value;
+
+            if (!amount || parseFloat(amount) <= 0) {
+                e.preventDefault();
+                alert('Please enter a valid amount greater than 0.');
+                return;
+            }
+
+            if (!mobileNumber || mobileNumber.length < 10) {
+                e.preventDefault();
+                alert('Please enter a valid mobile number.');
+                return;
+            }
+
+            // Show loading state
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+            submitBtn.disabled = true;
+        });
+
+        // Initialize fee options visibility
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleFeeOptions();
+        });
+    </script>
+</body>
+</html>

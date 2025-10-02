@@ -1,0 +1,375 @@
+# ETISALAT UPG PAYMENT GATEWAY - PROJECT DOCUMENTATION & WORKFLOW
+================================================================================
+
+PROJECT OVERVIEW
+================================================================================
+This project implements the Etisalat UPG (Universal Payment Gateway) Request to Pay 
+functionality using Node.js and Express.js with a modern HTML/CSS/JavaScript frontend.
+
+The system allows merchants to send payment requests to customers' mobile wallets 
+(Tahweel/mVisa) through the Etisalat UPG API.
+
+PROJECT ARCHITECTURE
+================================================================================
+
+TECHNOLOGY STACK:
+- Backend: Node.js + Express.js
+- Frontend: HTML5 + CSS3 + JavaScript (ES6+)
+- UI Framework: Bootstrap 5
+- Icons: Font Awesome 6
+- HTTP Client: Axios
+- Environment Management: dotenv
+- Security: HMAC-SHA256
+
+FOLDER STRUCTURE:
+================================================================================
+etisalat-upg-payment/
+├── .env                    # Environment configuration (credentials)
+├── server.js               # Main Express server application
+├── package.json            # Node.js dependencies and scripts
+├── README.md               # Project documentation
+├── setup.bat               # Windows installation script
+├── services/
+│   └── upgService.js       # UPG API integration service
+├── utils/
+│   └── hash.js            # Cryptographic utilities (HMAC-SHA256)
+├── public/                # Static frontend files
+│   ├── index.html         # Main payment form page
+│   ├── error.html         # Error fallback page
+│   ├── css/
+│   │   └── style.css      # Custom CSS styles
+│   └── js/
+│       └── app.js         # Frontend JavaScript logic
+└── views/                 # Legacy EJS templates (deprecated)
+    ├── error.ejs
+    ├── payment-form.ejs
+    └── payment-result.ejs
+
+DEVELOPMENT WORKFLOW
+================================================================================
+
+PHASE 1: PROJECT INITIALIZATION
+--------------------------------
+1. Created Node.js project structure
+2. Installed dependencies:
+   - express: Web application framework
+   - axios: HTTP client for API requests
+   - body-parser: Request body parsing middleware
+   - dotenv: Environment variable management
+   - nodemon: Development auto-reload (dev dependency)
+
+3. Set up basic Express server with middleware configuration
+
+PHASE 2: BACKEND DEVELOPMENT
+----------------------------
+1. Created UPG API service (services/upgService.js):
+   - Implemented requestToPay() function
+   - Added parameter validation
+   - Configured API endpoint communication
+   - Error handling and response processing
+
+2. Created cryptographic utilities (utils/hash.js):
+   - generateSecureHash() function using HMAC-SHA256
+   - generateTransactionDateTime() for unique timestamps
+   - Secure hash validation per UPG API requirements
+
+3. Implemented server routes (server.js):
+   - GET / : Serve main HTML page
+   - POST /api/request-to-pay : Process payment requests
+   - GET /status : Health check endpoint
+   - Error handling middleware
+   - 404 fallback handler
+
+PHASE 3: FRONTEND DEVELOPMENT (MIGRATION FROM EJS TO STATIC)
+-----------------------------------------------------------
+1. Created modern HTML structure (public/index.html):
+   - Responsive Bootstrap 5 layout
+   - Comprehensive payment form
+   - Modal dialogs for results
+   - Accessibility features
+   - Mobile-first design
+
+2. Developed custom CSS (public/css/style.css):
+   - Etisalat brand colors and styling
+   - Responsive breakpoints
+   - Form validation states
+   - Loading animations
+   - Print styles
+
+3. Built JavaScript application (public/js/app.js):
+   - PaymentGateway class for form handling
+   - Real-time form validation
+   - AJAX API communication
+   - Success/error result display
+   - User experience enhancements
+
+PHASE 4: ENVIRONMENT CONFIGURATION
+----------------------------------
+1. Created .env file with production credentials:
+   - MERCHANT_ID: 10986849809
+   - TERMINAL_ID: 704207
+   - MERCHANT_SECRET_KEY: [64-character hex string]
+   - API endpoints and default settings
+
+2. Updated server to use environment variables
+3. Added configuration validation on startup
+
+TECHNICAL IMPLEMENTATION DETAILS
+================================================================================
+
+API INTEGRATION:
+---------------
+- Endpoint: https://upg.egyptianbanks.com/cube/paylink.svc/api/RequestToPay
+- Method: POST
+- Authentication: HMAC-SHA256 secure hash
+- Content-Type: application/json
+
+SECURE HASH GENERATION:
+----------------------
+Algorithm: HMAC-SHA256
+Input Fields (concatenated with &):
+- DateTimeLocalTrxn=YYMMDDHHMMSSmm
+- MerchantId=10986849809
+- TerminalId=704207
+
+Process:
+1. Sort parameters alphabetically
+2. Concatenate as: "DateTimeLocalTrxn=value&MerchantId=value&TerminalId=value"
+3. Generate HMAC-SHA256 with merchant secret key
+4. Convert to uppercase hexadecimal
+
+FRONTEND FEATURES:
+-----------------
+1. Form Validation:
+   - Real-time input validation
+   - Egyptian mobile number formatting
+   - Amount validation (0.01-999,999 EGP)
+   - Required field indicators
+
+2. User Experience:
+   - Loading states during API calls
+   - Success/error modal dialogs
+   - Clipboard copy functionality
+   - Responsive design for all devices
+   - Accessibility compliance
+
+3. Payment Options:
+   - Basic payment (amount + mobile number)
+   - Optional merchant reference
+   - Validity period configuration
+   - Customer metadata (loyalty, label, etc.)
+   - Tip enablement
+   - Convenience fees (fixed or percentage)
+
+API ENDPOINTS DOCUMENTATION
+================================================================================
+
+POST /api/request-to-pay
+------------------------
+Purpose: Send payment request to customer mobile wallet
+
+Request Headers:
+- Content-Type: application/json
+
+Request Body:
+{
+  "amount": 100.50,              // Required: Payment amount in EGP
+  "mobileNumber": "01234567890", // Required: Customer mobile number
+  "merchantReference": "REF123", // Optional: Internal reference
+  "validity": 30,                // Optional: Validity in minutes
+  "loyaltyNumber": "12345",      // Optional: Customer loyalty number
+  "customerLabel": "VIP",        // Optional: Customer label
+  "purposeOfTransaction": "Bill",// Optional: Payment purpose
+  "billNumber": "INV-001",       // Optional: Bill/invoice number
+  "tip": false,                  // Optional: Enable tip option
+  "convenienceFeeFixed": 5.00,   // Optional: Fixed fee in EGP
+  "convenienceFeePercentage": 2.5// Optional: Percentage fee
+}
+
+Success Response (200):
+{
+  "success": true,
+  "data": {
+    "Success": true,
+    "SystemReference": 31922,
+    "TxnId": 31922,
+    "TxnDate": "20231001120000",
+    "Validity": "30",
+    "ISOQR": "...",
+    "MerchantReference": "REF123",
+    "ReceiverAccountNumber": "01234567890",
+    "ReceiverScheme": "UPGS-NBE-Production"
+  },
+  "paymentData": {
+    "amount": 100.50,
+    "mobileNumber": "01234567890",
+    "merchantReference": "REF123"
+  }
+}
+
+Error Response (400/500):
+{
+  "success": false,
+  "error": "Amount and Mobile Number are required fields."
+}
+
+GET /status
+-----------
+Purpose: Health check and configuration info
+
+Response (200):
+{
+  "status": "OK",
+  "service": "Etisalat UPG Request to Pay",
+  "timestamp": "2023-10-01T12:00:00.000Z",
+  "config": {
+    "merchantId": "10986849809",
+    "terminalId": "704207",
+    "currency": "EGP (818)"
+  }
+}
+
+SECURITY IMPLEMENTATION
+================================================================================
+
+1. ENVIRONMENT VARIABLES:
+   - All sensitive credentials stored in .env file
+   - No hardcoded secrets in source code
+   - Production/development environment separation
+
+2. API SECURITY:
+   - HMAC-SHA256 request signing
+   - Unique transaction timestamps
+   - Input validation and sanitization
+   - Error message sanitization
+
+3. FRONTEND SECURITY:
+   - Client-side validation (with server-side backup)
+   - XSS prevention through proper encoding
+   - CSRF protection ready (can be added)
+   - Secure communication (HTTPS in production)
+
+DEPLOYMENT WORKFLOW
+================================================================================
+
+DEVELOPMENT SETUP:
+1. Clone repository
+2. Copy .env.example to .env
+3. Configure merchant credentials
+4. Run: npm install
+5. Run: npm run dev (development with auto-reload)
+
+PRODUCTION DEPLOYMENT:
+1. Set NODE_ENV=production
+2. Configure production .env variables
+3. Install production dependencies: npm install --production
+4. Start server: npm start
+5. Configure reverse proxy (nginx/Apache)
+6. Set up SSL certificate
+7. Configure firewall rules
+
+TESTING WORKFLOW:
+1. Unit testing (can be added with Jest)
+2. API endpoint testing
+3. Form validation testing
+4. Cross-browser compatibility testing
+5. Mobile responsiveness testing
+6. Payment flow testing with test credentials
+
+TROUBLESHOOTING GUIDE
+================================================================================
+
+COMMON ISSUES:
+
+1. "Missing required environment variables"
+   Solution: Check .env file exists and contains all required variables
+
+2. "UPG API Error (401): Unauthorized"
+   Solution: Verify merchant credentials and secure hash generation
+
+3. "Network error. Please check your connection"
+   Solution: Check internet connectivity and UPG API endpoint availability
+
+4. "Amount must be greater than zero"
+   Solution: Ensure amount is positive number in correct format
+
+5. Frontend not loading properly
+   Solution: Check static file serving and paths in server.js
+
+DEBUG STEPS:
+1. Check server console for error messages
+2. Verify .env file configuration
+3. Test API endpoints with Postman/curl
+4. Check browser developer tools for JavaScript errors
+5. Verify network connectivity to UPG servers
+
+MONITORING AND LOGGING:
+1. Server logs all API requests/responses
+2. Error tracking with stack traces
+3. Performance monitoring (can be added)
+4. Transaction audit trail
+
+FUTURE ENHANCEMENTS
+================================================================================
+
+PLANNED FEATURES:
+1. Transaction status checking
+2. Refund functionality
+3. QR code generation
+4. Payment notifications webhook
+5. Dashboard for transaction history
+6. Multi-language support
+7. Rate limiting
+8. API authentication for multiple merchants
+
+TECHNICAL IMPROVEMENTS:
+1. Unit and integration tests
+2. API documentation (Swagger/OpenAPI)
+3. Docker containerization
+4. Database integration for transaction logging
+5. Redis caching for performance
+6. Load balancing for scalability
+7. Monitoring and alerting (Prometheus/Grafana)
+
+MAINTENANCE TASKS
+================================================================================
+
+REGULAR MAINTENANCE:
+1. Update dependencies (npm audit)
+2. Security vulnerability scanning
+3. Performance optimization
+4. Log rotation and cleanup
+5. SSL certificate renewal
+6. Backup configuration files
+
+CODE QUALITY:
+1. ESLint configuration for code standards
+2. Prettier for code formatting
+3. Git hooks for pre-commit validation
+4. Code review process
+5. Documentation updates
+
+SUPPORT AND DOCUMENTATION
+================================================================================
+
+DEVELOPER RESOURCES:
+- Etisalat UPG API Documentation
+- Node.js/Express.js documentation
+- Bootstrap 5 documentation
+- Font Awesome icon reference
+
+CONTACT INFORMATION:
+- Technical Support: Etisalat UPG Integration Team
+- Documentation: This file + README.md
+- Code Repository: [Project location]
+
+VERSION HISTORY:
+================================================================================
+v1.0.0 - Initial implementation with EJS templates
+v2.0.0 - Migration to static HTML/CSS/JS frontend
+v2.1.0 - Environment variable configuration
+v2.2.0 - Production credentials integration
+
+================================================================================
+END OF DOCUMENTATION
+================================================================================
