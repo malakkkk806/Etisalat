@@ -95,17 +95,23 @@ async function requestToPay(paymentData) {
             ...requestPayload,
             SecureHash: '***HIDDEN***'
         });
+        console.log('Target URL:', `${UPG_BASE_URL}${REQUEST_TO_PAY_ENDPOINT}`);
 
-        // Make API call to UPG
+        // Make API call to UPG with enhanced error handling
         const response = await axios.post(
             `${UPG_BASE_URL}${REQUEST_TO_PAY_ENDPOINT}`,
             requestPayload,
             {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                    'Accept': 'application/json',
+                    'User-Agent': 'Etisalat-UPG-Client/1.0'
                 },
-                timeout: 30000 // 30 seconds timeout
+                timeout: 45000, // Increased to 45 seconds for AWS
+                maxRedirects: 5,
+                validateStatus: function (status) {
+                    return status < 500; // Accept any status code less than 500
+                }
             }
         );
 
@@ -113,16 +119,50 @@ async function requestToPay(paymentData) {
         return response.data;
 
     } catch (error) {
-        console.error('Request to Pay Error:', error);
+        console.error('Request to Pay Error Details:', {
+            message: error.message,
+            code: error.code,
+            errno: error.errno,
+            syscall: error.syscall,
+            hostname: error.hostname,
+            timeout: error.timeout,
+            stack: error.stack?.split('\n').slice(0, 3).join('\n')
+        });
         
         if (error.response) {
             // API responded with error status
+            console.error('API Response Error:', {
+                status: error.response.status,
+                statusText: error.response.statusText,
+                headers: error.response.headers,
+                data: error.response.data
+            });
             throw new Error(`UPG API Error (${error.response.status}): ${JSON.stringify(error.response.data)}`);
         } else if (error.request) {
             // Request was made but no response received
-            throw new Error('No response received from UPG API. Please check network connectivity.');
+            console.error('Network Error Details:', {
+                url: `${UPG_BASE_URL}${REQUEST_TO_PAY_ENDPOINT}`,
+                method: 'POST',
+                timeout: error.timeout,
+                code: error.code,
+                message: error.message
+            });
+            
+            // More specific error messages based on error codes
+            if (error.code === 'ENOTFOUND') {
+                throw new Error('DNS resolution failed. Unable to resolve UPG API hostname. Check internet connectivity and DNS settings.');
+            } else if (error.code === 'ECONNREFUSED') {
+                throw new Error('Connection refused by UPG API server. The service may be down or blocked by firewall.');
+            } else if (error.code === 'ETIMEDOUT' || error.timeout) {
+                throw new Error('Request timeout. UPG API server is not responding within the expected time.');
+            } else if (error.code === 'ECONNRESET') {
+                throw new Error('Connection reset by UPG API server. Network interruption occurred.');
+            } else {
+                throw new Error(`Network connectivity issue (${error.code}): ${error.message}. Please check AWS security groups, NAT gateway, and internet connectivity.`);
+            }
         } else {
             // Something else happened
+            console.error('Request Setup Error:', error.message);
             throw new Error(`Request setup error: ${error.message}`);
         }
     }
