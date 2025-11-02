@@ -97,64 +97,26 @@ async function requestToPay(paymentData) {
         });
         console.log('Target URL:', `${UPG_BASE_URL}${REQUEST_TO_PAY_ENDPOINT}`);
 
-        // Make API call to UPG with enhanced error handling and retry logic
-        let lastError;
-        const maxRetries = 3;
-        
-        const axiosConfig = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'User-Agent': 'Etisalat-UPG-Client/1.0',
-                'Connection': 'keep-alive'
-            },
-            timeout: 90000, // Increased to 90 seconds for AWS
-            maxRedirects: 5,
-            validateStatus: function (status) {
-                return status < 500; // Accept any status code less than 500
-            }
-        };
-        
-        for (let attempt = 1; attempt <= maxRetries; attempt++) {
-            try {
-                console.log(`Attempt ${attempt}/${maxRetries} - Sending request to: ${UPG_BASE_URL}${REQUEST_TO_PAY_ENDPOINT}`);
-                
-                const response = await axios.post(
-                    `${UPG_BASE_URL}${REQUEST_TO_PAY_ENDPOINT}`,
-                    requestPayload,
-                    axiosConfig
-                );
-                
-                console.log('Request successful on attempt:', attempt);
-                console.log('UPG API Response:', response.data);
-                
-                // Return only the data, not the entire axios response object
-                return response.data;
-                
-            } catch (error) {
-                lastError = error;
-                console.log(`Attempt ${attempt} failed:`, error.code || error.message);
-                
-                // Retry on timeout or connection errors
-                if (attempt < maxRetries && (
-                    error.code === 'ECONNABORTED' || 
-                    error.code === 'ETIMEDOUT' ||
-                    error.code === 'ECONNRESET' ||
-                    error.message?.includes('timeout')
-                )) {
-                    const delay = attempt * 3000; // Progressive delay: 3s, 6s
-                    console.log(`Retrying in ${delay}ms...`);
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                    continue;
+        // Make API call to UPG with enhanced error handling
+        const response = await axios.post(
+            `${UPG_BASE_URL}${REQUEST_TO_PAY_ENDPOINT}`,
+            requestPayload,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'User-Agent': 'Etisalat-UPG-Client/1.0'
+                },
+                timeout: 45000, // Increased to 45 seconds for AWS
+                maxRedirects: 5,
+                validateStatus: function (status) {
+                    return status < 500; // Accept any status code less than 500
                 }
-                
-                // Non-retryable error or last attempt
-                break;
             }
-        }
-        
-        // All retries failed, throw the last error
-        throw lastError;
+        );
+
+        console.log('UPG API Response:', response.data);
+        return response.data;
 
     } catch (error) {
         console.error('Request to Pay Error Details:', {
@@ -188,15 +150,13 @@ async function requestToPay(paymentData) {
             
             // More specific error messages based on error codes
             if (error.code === 'ENOTFOUND') {
-                throw new Error(`DNS resolution failed for '${UPG_BASE_URL}'. This indicates AWS VPC DNS configuration issues. Check: 1) VPC DNS resolution enabled, 2) VPC DNS hostnames enabled, 3) Security group allows port 53 (DNS), 4) Route table has internet gateway/NAT gateway, 5) /etc/resolv.conf has valid nameservers.`);
+                throw new Error('DNS resolution failed. Unable to resolve UPG API hostname. Check internet connectivity and DNS settings.');
             } else if (error.code === 'ECONNREFUSED') {
                 throw new Error('Connection refused by UPG API server. The service may be down or blocked by firewall.');
             } else if (error.code === 'ETIMEDOUT' || error.timeout) {
                 throw new Error('Request timeout. UPG API server is not responding within the expected time.');
             } else if (error.code === 'ECONNRESET') {
                 throw new Error('Connection reset by UPG API server. Network interruption occurred.');
-            } else if (error.code === 'ECONNABORTED') {
-                throw new Error('Request timeout after 90 seconds. This may indicate slow network or AWS NAT Gateway issues. Check AWS VPC configuration.');
             } else {
                 throw new Error(`Network connectivity issue (${error.code}): ${error.message}. Please check AWS security groups, NAT gateway, and internet connectivity.`);
             }
